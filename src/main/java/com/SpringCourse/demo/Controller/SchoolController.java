@@ -1,35 +1,30 @@
 package com.SpringCourse.demo.Controller;
 
-import com.SpringCourse.demo.DTO.SchoolDTOs.MinSchoolResponse;
-import com.SpringCourse.demo.Model.School;
-import com.SpringCourse.demo.Repositories.SchoolRepository;
-import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-import java.util.stream.Collectors;
+import com.SpringCourse.demo.Model.School;
+
+import com.SpringCourse.demo.Services.SchoolServices.SchoolService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 public class SchoolController {
 
-    private  final SchoolRepository schoolRepository;
 
-    public SchoolController(SchoolRepository schoolRepository) {
-        this.schoolRepository = schoolRepository;
+    private  final SchoolService schoolService;
+
+    public SchoolController(SchoolService schoolService)  {
+        this.schoolService = schoolService;
     }
 
     @PostMapping("/school")
     @ResponseStatus(HttpStatus.OK)
-    public Object saveSchool(
+    public ResponseEntity<?> saveSchool(
             @RequestBody School school
     ){
-        try {
+            return schoolService.saveSchool(school);
 
-            return schoolRepository.save(school);
-
-        }catch(Exception e){
-            return e;
-        }
     }
 
 
@@ -38,29 +33,17 @@ public class SchoolController {
     public Object getSchool(
             @PathVariable Integer id
     ){
-        try {
 
-            return schoolRepository.findById(id);
+            return schoolService.findSchoolById(id);
 
-        }catch(Exception e){
-            return e;
-        }
     }
 
-
-    private MinSchoolResponse toMinSchoolResponse(School school){
-        return new MinSchoolResponse(school.getName());
-    }
 
 
     @GetMapping("/schools")
     @ResponseStatus(HttpStatus.OK)
-    public List<MinSchoolResponse> getSchools(){
-
-        return schoolRepository.findAll()
-                .stream()
-                .map(this::toMinSchoolResponse)
-                .collect(Collectors.toList());
+    public ResponseEntity<?> getSchools(){
+        return schoolService.findAllSchools();
     }
 
 }

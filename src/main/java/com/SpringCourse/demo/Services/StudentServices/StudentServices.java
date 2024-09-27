@@ -43,6 +43,30 @@ public class StudentServices {
 
     }
 
+    public ResponseEntity<?> findAllStudents() {
+        try {
+            return new ResponseEntity<>(studentRepository.findAll(), HttpStatus.OK);
+        }catch (Exception e){
+            return new ResponseEntity<>("bade request" , HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+    }
+    public ResponseEntity<?> findStudentById(Integer id) {
+        try {
+            return new ResponseEntity<>(studentRepository.findById(id).orElse(null), HttpStatus.OK);
+        }catch (Exception e){
+            return new ResponseEntity<>("bade request" , HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+    public ResponseEntity<?> deleteStudent(Integer id) {
+        try {
+            studentRepository.deleteById(id);
+            return new ResponseEntity<>("deleted", HttpStatus.OK);
+        }catch (Exception e){
+            return new ResponseEntity<>("bade request" , HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
 
 
 }

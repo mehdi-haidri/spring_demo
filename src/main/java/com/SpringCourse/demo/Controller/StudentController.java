@@ -12,13 +12,12 @@ import java.util.List;
 @RestController
 public class StudentController {
 
-    private final StudentRepository studentRepository;
+
     private final StudentServices studentServices;
 
 
 
-    public StudentController(StudentRepository studentRepository, StudentServices studentServices) {
-        this.studentRepository = studentRepository;
+    public StudentController(StudentServices studentServices) {
         this.studentServices = studentServices;
     }
 
@@ -44,18 +43,26 @@ public class StudentController {
     @ResponseStatus(HttpStatus.OK)
     public List<StudentDB> getStudents()
     {
-        return studentRepository.findAll();
+        return (List<StudentDB>) studentServices.findAllStudents();
     }
 
 
 
     @GetMapping("/students/{student_id}")
     @ResponseStatus(HttpStatus.OK)
-    public StudentDB getStudent(
+    public ResponseEntity<?> getStudent(
             @PathVariable Integer student_id
     ){
 
-        return studentRepository.findById(student_id).orElse(new StudentDB());
+        return studentServices.findStudentById(student_id);
+    }
+    @GetMapping("/delete_students/{student_id}")
+    @ResponseStatus(HttpStatus.OK)
+    public ResponseEntity<?> deleteStudent(
+            @PathVariable("student_id") Integer id
+    ){
+
+        return studentServices.deleteStudent(id);
     }
 
 
