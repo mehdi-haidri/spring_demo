@@ -3,10 +3,14 @@ import com.SpringCourse.demo.DTO.StudentDTOs.MinStudent;
 import com.SpringCourse.demo.Repositories.StudentRepository;
 import com.SpringCourse.demo.Model.StudentDB;
 import com.SpringCourse.demo.Services.StudentServices.StudentServices;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
 
 @RestController
@@ -26,10 +30,26 @@ public class StudentController {
     @PostMapping("/student_min")
 
     public ResponseEntity<?> saveStudentMin(
-            @RequestBody MinStudent StudentDTO
+            @Valid @RequestBody MinStudent StudentDTO
     ){
             return studentServices.saveStudentMin(StudentDTO);
     }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    private  ResponseEntity<?> handleMethodArgumentNotValidException(
+            MethodArgumentNotValidException exp
+    ){
+        HashMap<String , String> errors = new HashMap<>();
+        exp.getBindingResult().getAllErrors()
+                .forEach(error ->{
+                    var  fieldName = ((FieldError) error).getField();
+                    var errorMessage = error.getDefaultMessage();
+                    errors.put(fieldName, errorMessage);
+                });
+        return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
+    }
+
+
 
     @PostMapping("/student")
     public ResponseEntity<?> saveStudent(
